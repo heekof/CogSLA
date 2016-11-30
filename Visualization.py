@@ -1,8 +1,11 @@
 
 from Data import Data
-
+import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
 
 class Visualization(object):
+    Data = Data()
 
     def __init__(self,Data):
         self.Data = Data
@@ -23,7 +26,7 @@ class GraphViz(Visualization):
 
     def showgraph(self):
         # show graph
-        self.Data
+        pass
 
 class TableViz(Visualization):
     pass

@@ -1,5 +1,6 @@
 import datetime
 import time
+import logging
 # Import libraries use for visualization and analysis
 import pandas as pd
 import numpy as np
@@ -8,15 +9,32 @@ import numpy as np
 
 
 
-OS_PROJECT_NAME='mini-mon'
-password='password'
-OS_AUTH_URL='http://157.159.232.218:35357/v3/'
-username='mini-mon'
-MONASCA_API_URL='http://157.159.232.217:8070/v2.0/'
-monasca_url = 'http://157.159.232.217:8070/v2.0/'
+def printVar(a,b=3,*args,**kwargs):
+    print 'a = {} and b  = {} and c = {} '.format(a,b,args[0])
 
-keystone_url = 'http://157.159.232.218:35357/v3/'
-api_version = '2_0'
+    for key,value in kwargs.iteritems():
+        print 'key = {} , value = {} '.format(key,value)
+
+    return True
+def deleteContent(path):
+    open(path,'w').close()
+
+def initLog(path,debug=0):
+    logger = logging.getLogger(__name__)
+    deleteContent(path)
+    logger.setLevel(logging.DEBUG)
+    # create a file handler
+    handler = logging.FileHandler(path)
+    handler.setLevel(logging.DEBUG)
+
+    # create a logging format
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    # add the handlers to the logger
+    logger.addHandler(handler)
+    if not debug:
+        logging.disable(logging.DEBUG)
+    return logger
 
 
 
@@ -44,3 +62,61 @@ def stamped_df(dframe):
 
     return dframe
 
+
+def Timestamp(df):
+    tsp = np.array(df.index)
+    i = 0;
+    for ind in tsp:
+        tsp[i] = t.mktime(dt.datetime.strptime(repr(str(ind))[1:-1], '%Y-%m-%dT%H:%M:%S.%fZ').timetuple())
+        i += 1;
+    return tsp
+
+
+def current_time(T):
+    ts_epoch = t.mktime(dt.datetime.strptime(repr(str(T))[1:-1], '%Y-%m-%dT%H:%M:%S.%fZ').timetuple())
+    ts = datetime.datetime.fromtimestamp(ts_epoch).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+    # curt_t = strftime('%Y-%m-%dT%H:%M:%S.0Z', gmtime())
+    # current_time(curt_t)
+    # datetime.datetime.fromtimestamp(ts_epoch).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    return ts
+
+
+# Compute a the percentage change of an array
+def percentage_change(X):
+    return [100.0 * a1 / a2 - 100 for a1, a2 in zip(X[1:], X)]
+
+
+# df in percentage
+def perc_df(df):
+    for i in range(len(df.columns)):
+        metric_name = df.columns[i]
+        df[metric_name] = np.append([1], percentage_change(df[metric_name].values))
+
+    return df
+
+
+def to_vect(X, w):
+    inputs = [[X[i + e] for e in range(w)] for i in range(len(X) - w)]
+    targets = [[X[j + w]] for j in range(len(X) - w)]
+
+    return inputs, targets
+
+
+def to_vect2(X, w):
+    inputs = [[X[i + e] for e in range(w)] for i in range(len(X) - w)]
+    targets = [X[j + w] for j in range(len(X) - w)]
+
+    return np.array(inputs), np.array(targets)
+
+
+# getting the prediction in the form of an array
+def get_prediction():
+    i = 0;
+    for inp in inputs:
+        error = pow(nn.predict(inputs[i])[0] - targets[i][0], 2);
+        print ' \n The input is : \n\n ' + str(inputs[i]) + '\n\n the target is : \n\n ' + str(
+            targets[i]) + '\n\n the predicted value is : \n\n ' + str(
+            nn.predict(inputs[i])) + '\n\n The error is : \n\n ' + str(error) + ' \n\n *** \n\n '
+        i += 1;
+        time.sleep(5)
