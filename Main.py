@@ -15,15 +15,23 @@ from Util import initLog
 logger = initLog('log/system.log',debug=1)
 logger.debug("Start of the Main Program")
 
-TS = Timeseries()
-TS.from_csv("Data/sprout.csv")
-#print TS.get_dataframe()
-Graph = GraphViz(TS)
-dataframe = pd.DataFrame()
-dataframe = Graph.Data.Dataframe
-dataframe.plot()
+if __name__ == '__main__':
 
-plt.plot([1,2,3])
+    # Create the Data Class
+    TS = Timeseries()
+    # Import Data
+    TS.from_csv("Data/sprout.csv")
+    # Create Viz Object with Data as TS
+    Graph = GraphViz(TS)
+    # plot the Data
+    Graph.showgraph_by_name(plt,'cpu_wait_perc',10,50)
+    Graph.save(plt,'maFigure.png')
+
+
+
+
+
+
 
 
 #MC = MonascaConnect()
