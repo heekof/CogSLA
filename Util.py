@@ -6,8 +6,21 @@ import pandas as pd
 import numpy as np
 #import cufflinks as cf
 
+def read_file(path):
+    file = open(path, 'r')
+    content = file.read()
+    return content
 
+def write_file(path,content):
+    file = open(path, "w")
+    file.write(content)
+    file.close()
 
+def write_list(path,thelist):
+    file = open(path, "w")
+    for item in thelist:
+        file.write("%s\n" % item)
+    file.close()
 
 def printVar(a,b=3,*args,**kwargs):
     print 'a = {} and b  = {} and c = {} '.format(a,b,args[0])
@@ -26,7 +39,6 @@ def initLog(path,debug=0):
     # create a file handler
     handler = logging.FileHandler(path)
     handler.setLevel(logging.DEBUG)
-
     # create a logging format
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
@@ -62,14 +74,6 @@ def stamped_df(dframe):
 
     return dframe
 
-
-def Timestamp(df):
-    tsp = np.array(df.index)
-    i = 0;
-    for ind in tsp:
-        tsp[i] = t.mktime(dt.datetime.strptime(repr(str(ind))[1:-1], '%Y-%m-%dT%H:%M:%S.%fZ').timetuple())
-        i += 1;
-    return tsp
 
 
 def current_time(T):
