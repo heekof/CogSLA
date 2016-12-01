@@ -86,6 +86,10 @@ class Timeseries(Data):
         self.testX = np.reshape(self.testX, (self.testX.shape[0], 1, self.testX.shape[1]))
 
 
+    def moving_average(self):
+        pass
+
+
 
 
 
