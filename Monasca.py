@@ -2,6 +2,7 @@ from monascaclient import client
 from monascaclient import ksclient
 import sys
 from Util import *
+from Password import *
 import os
 
 class Monasca:
@@ -20,12 +21,7 @@ class Monasca:
 
     #@staticmethod
     def authenticate(self):
-        KEYSTONE_URL = 'http://157.159.232.218:35357/v3/'
-        PROJECT_NAME = 'mini-mon'
-        USERNAME = 'mini-mon'
-        PASSWORD = 'password'
-        api_version = '2_0'
-        MONASCA_URL = 'http://157.159.232.217:8070/v2.0/'
+
         # Authenticate to Keystone
         try:
             # connecting
