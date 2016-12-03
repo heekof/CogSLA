@@ -24,14 +24,14 @@ if __name__ == '__main__':
 
 '''
 Working with Time Series
-'''
+
 # Create the Data Class
 TS = Timeseries()
 # Import Data
 TS.from_csv("Data/net_out_demo_1_min.csv")
 # print TS.dataframe.head(5)
 # print TS.data[10:20]
-
+'''
 
 
 '''
@@ -70,32 +70,3 @@ print IMS_Service.SLA.SLO.get_values(),
 
 
 
-
-'''
-
-    Working with Monasca
-
-    Measurements to Dataframe
-
-MC = Monasca()
-df_Ellis = MC.df_from_measurements('ellis.jaafar.com');
-df_Ellis.head()
-'''
-
-
-
-'''
-
-    Connecting to Monasca
-
-MC = MonascaConnect()
-MC.authenticate()
-#resp = MC.monasca_client.metrics.list()
-#print type(resp)
-#write_list("Data/response_monasca.txt",resp)
-
-#check error here
-MC.request()
-#MC.show_measurements()
-MC.store_measurements("Data/Measurements.txt")
-'''

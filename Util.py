@@ -36,14 +36,15 @@ def yaml_load(file_path):
     return data
 
 
-def yaml_dump(file_path):
+def yaml_dump(file_path, data):
     ''' Dump Data to a YAML file '''
     with open(file_path, 'w') as file_descriptor:
         yaml.dump(data, file_descriptor)
 
-
-
-
+def read_list(path):
+    with open(path) as f:
+        lines = f.read().splitlines()
+    return lines
 
 def read_file(path):
     file = open(path, 'r')

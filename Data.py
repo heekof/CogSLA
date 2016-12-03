@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from Util import yaml_load
-
-
+from Util import yaml_load, read_list
+import json
+import matplotlib.pyplot as plt
 # Abstract data class
 class Data(object):
     data = []
@@ -23,7 +23,7 @@ class Data(object):
 
 
     def show_data(self):
-        print self.Dataset
+        print self.data
 
     def show_dataframe(self):
         print self.Dataframe.head()
@@ -41,7 +41,7 @@ class Data(object):
 
 
     def to_csv(self,path):
-        self.Dataset.to_csv(path,sep=';')
+        self.dataframe.to_csv(path,sep=';')
 
     # split into train and test sets
     def split_data(self,percentage_training = 0.67):
@@ -100,6 +100,13 @@ class Timeseries(Data):
     def to_csv(self,name,path="Data/"):
         self.dataframe.to_csv(path+name, sep=";")
 
+    def plot(self,title="No title", freq=None):
+        if freq:
+            self.dataframe.resample(freq).mean().plot()
+        else:
+            self.dataframe.plot()
+        plt.title(title)
+        plt.show()
 
 # TODO Create at least 3 SLO for IMS Service
 class SLO(Data):
@@ -119,6 +126,92 @@ class SLO(Data):
         return self.data
 
 
+class RawData(Data):
+
+    # Use Json
+    def __init__(self, path):
+        with open(path) as data_file:
+            self.data = json.load(data_file)
+
+
+    def df_from_raw(self, group):
+        i = 0
+        raw = filter(None, self.data)
+        log = 0;
+        df = pd.DataFrame()
+        #print('raw = {} '.format(raw))
+        for s in raw:
+            # print('s = {} '.format(s[0]))
+            if s[0]['measurements'] and s[0]['dimensions']['hostname'] == group:
+                m = np.array(s[0]['measurements'])
+                timestamps = m[:, s[0]['columns'].index('timestamp')]
+                df = pd.DataFrame(index=timestamps)
+                break;
+        m = 0;
+        for measure in raw:
+            if measure[0]['measurements'] and measure[0]['dimensions']['hostname'] == group:
+                hostname = group
+                m = np.array(measure[0]['measurements'])
+                timestamps = m[:, measure[0]['columns'].index('timestamp')]
+                # df = pd.DataFrame(index = timestamps)
+                # getting name
+                if (log == 1):
+                    print 'metric : \n'
+                    print measure[0]['name']
+                name = measure[0]['name'];
+                # getting dimensions
+                if (log == 1):
+                    print '\n Machine name : \n'
+                    print measure[0]['dimensions']['hostname']
+                # Getting measurement
+                if (log == 1):
+                    print '\n measurements \n'
+                    print m  # measure[0]['measurements']
+
+                # Measurement into Array
+
+                m = np.array(measure[0]['measurements'])
+
+                timestamps = m[:, measure[0]['columns'].index('timestamp')]
+                if (log == 1):
+                    print timestamps
+
+                values = m[:, measure[0]['columns'].index('value')]
+                if (log == 1):
+                    print '\n values \n '
+                    print values
+
+                # vars()["df_"+str(i)] =  dict( zip( timestamps, m));
+
+                df[name] = m[:, measure[0]['columns'].index('value')];
+
+                if (log == 1):
+                    print 'This is the dataframe' + 'is' + name
+
+                # vars()["df_"+str(i)]['hostname'] = hostname;
+
+                if (log == 1):
+                    print ' \n \n ***********  --------------- *********** \n'
+                i = i + 1;
+        return df;
+
+    def to_csv(self,host,path,metric={}):
+        if metric:
+            self.df_from_raw(host[metric]).to_csv(path, sep=";")
+        else:
+            self.df_from_raw(host).to_csv("Data/"+path, sep=";")
+
 if __name__ == '__main__':
-     pass
+
+     #RawData = Text("Data/measurements.json")
+     #RawData.to_csv('jaafar',"test.csv")
+
+
+    TS =Timeseries()
+    TS.from_csv("Data/Ellis_feq_30_sec.csv")
+    TS.plot("title","1h")
+
+
+
+
 
