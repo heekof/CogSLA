@@ -157,7 +157,7 @@ if __name__ == '__main__':
     # df_Ellis = MC.df_from_measurements('ellis.jaafar.com');
     MC.request(start_time="2016-09-17T15:50:26.0Z", end_time="2016-11-17T15:55:55.0Z", metrics=ALL)
     # MC.show_measurements()
-    MC.store_measurements("Data/measurements.json")
+    MC.store_measurements("sample/Data/measurements.json")
     #print type(MC.measurements[4][0])
 
     #print MC.df_from_measurements('homer.jaafar.com')

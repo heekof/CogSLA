@@ -97,7 +97,7 @@ class Timeseries(Data):
         self.data = self.dataframe.values
         self.data = self.data.astype('float32')
 
-    def to_csv(self,name,path="Data/"):
+    def to_csv(self,name,path="sample/Data/"):
         self.dataframe.to_csv(path+name, sep=";")
 
     def plot(self,title="No title", freq=None):
@@ -197,9 +197,9 @@ class RawData(Data):
 
     def to_csv(self,host,path,metric={}):
         if metric:
-            self.df_from_raw(host[metric]).to_csv(path, sep=";")
+            self.df_from_raw(host[metric]).to_csv("sample/Data/"+path, sep=";")
         else:
-            self.df_from_raw(host).to_csv("Data/"+path, sep=";")
+            self.df_from_raw(host).to_csv("sample/Data/"+path, sep=";")
 
 if __name__ == '__main__':
 
@@ -207,7 +207,7 @@ if __name__ == '__main__':
      #RawData.to_csv('jaafar',"test.csv")
 
     TS =Timeseries()
-    TS.from_csv("Data/Ellis_feq_30_sec.csv")
+    TS.from_csv("sample/Data/Ellis_feq_30_sec.csv")
     TS.plot("title", "1h")
 
 

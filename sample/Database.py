@@ -2,7 +2,11 @@ import sqlite3
 import time
 import datetime
 import random
-
+from Data import Timeseries
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from matplotlib import style
+style.use('fivethirtyeight')
 
 # TODO Implement SQL and Influx or MangoDB
 class Database(object):
@@ -42,22 +46,78 @@ class SQL(Database):
         pass
 
     def connect(self):
-        self.conn = sqlite3.connect('Data/tutorial.db')
+        self.conn = sqlite3.connect('sample/Data/timeseries.db')
         self.c = self.conn.cursor()
 
     def create_table(self):
-        self.c.execute('CREATE TABLE IF NOT EXISTS stuffToPlot(unix REAL, datestamp TEXT, keyword TEXT, value REAL)')
+        self.c.execute('CREATE TABLE IF NOT EXISTS Ellis(unix REAL, datestamp TEXT, value REAL)')
 
-    def data_entry(self):
-        self.c.execute("INSERT INTO stuffToPlot VALUES(45654564,'2016-01-01','Python','5')")
+    def write(self, dataframe):
+
+        #date = str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S'))
+        for i in range(len(dataframe)):
+            #date = datetime.datetime.strftime(dataframe.index[i],'%Y-%m-%d %H:%M:%S.%f')
+            print i
+            print dataframe.index[i]
+            if i != 241:
+                unix = time.mktime(datetime.datetime.strptime(str(dataframe.index[i]), "%Y-%m-%d %H:%M:%S.%f").timetuple())
+                date = str(dataframe.index[i])
+                value = dataframe.cpu[i]
+                #print "date {} and value {} ".format(date,value)
+                self.c.execute("INSERT INTO Ellis (unix, datestamp, value) VALUES (?,?,?)",
+                           (unix, date, value))
+
         self.conn.commit()
-        self.c.close()
-        self.conn.close()
+
+
+    def read_from_db(self):
+        self.c.execute("SELECT * FROM Ellis")
+        data = []
+        for row in self.c.fetchall():
+            #print row
+            data.append(row)
+        return data
+
+    def plot(self):
+        self.c.execute("SELECT unix,value FROM Ellis")
+        dates = []
+        values = []
+        i=0
+        for row in self.c.fetchall():
+            # print row
+            print i
+            dates.append(datetime.datetime.fromtimestamp(row[0]))
+            values.append(row[1])
+            i += 1
+
+        plt.plot_date(dates, values, '-')
+        plt.show()
 
 
 if __name__ == "__main__":
+    '''
+    Write TS to SQL
+
+    '''
     MySQL = SQL()
     MySQL.connect()
     MySQL.create_table()
-    MySQL.data_entry()
+
+    TS = Timeseries()
+    TS.from_csv("sample/Data/Ellis_feq_30_sec.csv")
+
+    MySQL.write(TS.dataframe)
+    #MySQL.c.close()
+     #MySQL.conn.close()
+
+    '''
+    Read from SQL
+
+    '''
+
+    #print 'The length of the data is '.format(len(MySQL.read_from_db()))
+    MySQL.plot()
+
+    MySQL.c.close()
+    MySQL.conn.close()
 
