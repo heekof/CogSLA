@@ -9,13 +9,7 @@ import yaml
 
 #import cufflinks as cf
 
-ALL = ['net.out_packets_sec', 'cpu.idle_perc', 'cpu.stolen_perc', 'cpu.system_perc', 'cpu.wait_perc',
-       'disk.inode_used_perc', 'disk.space_used_perc', 'host_alive_status', 'http_status', 'io.read_kbytes_sec',
-       'io.read_req_sec', 'io.read_time_sec', 'io.write_kbytes_sec', 'io.write_req_sec', 'io.write_time_sec',
-       'load.avg_15_min', 'load.avg_1_min', 'load.avg_5_min', 'mem.free_mb', 'mem.total_mb', 'mem.usable_perc',
-       'mem.usable_mb', 'net.in_bytes_sec', 'net.in_errors_sec', 'net.in_packets_dropped_sec', 'net.in_packets_sec',
-       'net.out_bytes_sec', 'net.out_errors_sec', 'process.cpu_perc', 'process.mem.rss_mbytes']
-
+ALL = ['net.out_packets_sec', 'cpu.idle_perc', 'cpu.stolen_perc', 'cpu.system_perc', 'cpu.wait_perc', 'disk.inode_used_perc', 'disk.space_used_perc', 'host_alive_status', 'http_status', 'io.read_kbytes_sec', 'io.read_req_sec', 'io.read_time_sec', 'io.write_kbytes_sec', 'io.write_req_sec', 'io.write_time_sec', 'load.avg_15_min', 'load.avg_1_min', 'load.avg_5_min', 'mem.free_mb', 'mem.total_mb', 'mem.usable_perc',        'mem.usable_mb', 'net.in_bytes_sec', 'net.in_errors_sec', 'net.in_packets_dropped_sec', 'net.in_packets_sec', 'net.out_bytes_sec', 'net.out_errors_sec', 'process.cpu_perc', 'process.mem.rss_mbytes']
 def Timestamp(df):
     tsp = np.array(df.index)
     string_date = np.array(df.index)

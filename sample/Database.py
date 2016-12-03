@@ -8,7 +8,7 @@ import matplotlib.dates as mdates
 from matplotlib import style
 style.use('fivethirtyeight')
 
-# TODO Implement SQL and Influx or MangoDB
+# TODO Implement also Influx or MangoDB
 class Database(object):
     pass
 
@@ -49,6 +49,8 @@ class SQL(Database):
         self.conn = sqlite3.connect('sample/Data/timeseries.db')
         self.c = self.conn.cursor()
 
+
+    # TODO automate the creation of the database
     def create_table(self):
         self.c.execute('CREATE TABLE IF NOT EXISTS Ellis(unix REAL, datestamp TEXT, value REAL)')
 
@@ -57,12 +59,12 @@ class SQL(Database):
         #date = str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S'))
         for i in range(len(dataframe)):
             #date = datetime.datetime.strftime(dataframe.index[i],'%Y-%m-%d %H:%M:%S.%f')
-            print i
-            print dataframe.index[i]
+            #print i
+            #print dataframe.index[i]
             if i != 241:
                 unix = time.mktime(datetime.datetime.strptime(str(dataframe.index[i]), "%Y-%m-%d %H:%M:%S.%f").timetuple())
                 date = str(dataframe.index[i])
-                value = dataframe.cpu[i]
+                value = dataframe['cpu.idle_perc'][i]
                 #print "date {} and value {} ".format(date,value)
                 self.c.execute("INSERT INTO Ellis (unix, datestamp, value) VALUES (?,?,?)",
                            (unix, date, value))
@@ -82,15 +84,18 @@ class SQL(Database):
         self.c.execute("SELECT unix,value FROM Ellis")
         dates = []
         values = []
+        pas = []
         i=0
         for row in self.c.fetchall():
-            # print row
-            print i
+            print row
+            #print i
             dates.append(datetime.datetime.fromtimestamp(row[0]))
             values.append(row[1])
+            pas.append(i)
             i += 1
 
-        plt.plot_date(dates, values, '-')
+        plt.plot_date(dates[1:100], values[1:100], '--')
+        #plt.scatter(pas[1:100], values[1:100])
         plt.show()
 
 
@@ -104,7 +109,7 @@ if __name__ == "__main__":
     MySQL.create_table()
 
     TS = Timeseries()
-    TS.from_csv("sample/Data/Ellis_feq_30_sec.csv")
+    TS.from_csv("sample/Data/test.csv")
 
     MySQL.write(TS.dataframe)
     #MySQL.c.close()

@@ -12,9 +12,11 @@ import pickle
 class Monasca:
     database = None
     ks = None
-    monasca_client = None
+    monasca_client = []
     metrics = []
+    metrics2 = []
     measurements = []
+
 
     def __init__(self):
        #  self.measurements = read_list("Data/Measurements.txt")
@@ -37,25 +39,31 @@ class Monasca:
     def get_monasca_client(self):
         return self.monasca_client
 
-    def request(self, start_time="2016-09-17T15:50:26.0Z", end_time="2016-09-17T15:55:55.0Z", metrics=['net.out_packets_sec']):
-       # try:
-        self.metrics = self.get_metrics(names=metrics)
-       # The error was HEre self.metrics instead of metrics
-        self.measurements = self.get_measurements(self.metrics, start_time, end_time)
+    def request(self, start_time, end_time, metrics=['net.out_packets_sec']):
+        metrics2 = []
+
+
+        self.metrics = metrics
+
+        # The error was HEre self.metrics instead of metrics
+        self.measurements = self.get_measurements(self.get_metrics(metrics,limit=25), start_time, end_time)
 
     def show_measurements(self):
         print self.measurements
 
     # getting the metrics information
     def get_metrics(self, names=[None], dimensions={}, limit={}):
-
+        metrics = []
         for name in names:
             # Invoke the Monasca client
-            metrics = self.metrics + self.monasca_client.metrics.list(name=name, dimensions=dimensions, limit=limit)
+            metrics = metrics + self.monasca_client.metrics.list(name=name, dimensions=dimensions, limit=limit)
+        #print names
         return metrics
 
     # function get measurements
     def get_measurements(self, metrics, start_time=None, end_time=None, limit=None):
+        measurements = []
+
         if start_time == None:
             start_date = datetime.datetime.utcnow() - datetime.timedelta(seconds=3600)
             start_time = start_date.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -64,19 +72,20 @@ class Monasca:
             end_date = datetime.datetime.utcnow() - datetime.timedelta(seconds=0)
             end_time = end_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        #print('metrics = {}'.format(metrics))
+        #print metrics
         for metric in metrics:
             # Invoke the Monasca client
-            #print('metric = {}'.format(metric))
-            self.measurements.append(self.monasca_client.metrics.list_measurements(
+            measurements.append(self.monasca_client.metrics.list_measurements(
                 name=metric['name'],
                 dimensions=metric['dimensions'],
                 start_time=start_time,
                 end_time=end_time))
 
-        return self.measurements
-
         return measurements
+
+
+
+
 
     # def df_from_measurements(self, group):
     #     i = 0
@@ -155,9 +164,12 @@ if __name__ == '__main__':
     MC = Monasca()
     MC.authenticate()
     # df_Ellis = MC.df_from_measurements('ellis.jaafar.com');
-    MC.request(start_time="2016-09-17T15:50:26.0Z", end_time="2016-11-17T15:55:55.0Z", metrics=ALL)
-    # MC.show_measurements()
+    #print ALL
+    MC.request(start_time="2016-11-16T15:50:26.0Z", end_time="2016-11-17T16:55:55.0Z",metrics=ALL[1:5])
     MC.store_measurements("sample/Data/measurements.json")
+    #print MC.measurements
+
+
     #print type(MC.measurements[4][0])
 
     #print MC.df_from_measurements('homer.jaafar.com')

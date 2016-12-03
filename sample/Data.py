@@ -203,12 +203,12 @@ class RawData(Data):
 
 if __name__ == '__main__':
 
-     #RawData = Text("Data/measurements.json")
-     #RawData.to_csv('jaafar',"test.csv")
+    RD = RawData("sample/Data/measurements.json")
+    RD.to_csv('ellis.jaafar.com',"test.csv")
 
     TS =Timeseries()
-    TS.from_csv("sample/Data/Ellis_feq_30_sec.csv")
-    TS.plot("title", "1h")
+    TS.from_csv("sample/Data/test.csv")
+    TS.plot("title")
 
 
 
