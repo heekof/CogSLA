@@ -108,7 +108,7 @@ class Timeseries(Data):
         plt.title(title)
         plt.show()
 
-# TODO Create at least 3 SLO for IMS Service
+# TODO Create at least 3 SLOs for IMS Service
 class SLO(Data):
 
     data = None
@@ -206,10 +206,9 @@ if __name__ == '__main__':
      #RawData = Text("Data/measurements.json")
      #RawData.to_csv('jaafar',"test.csv")
 
-
     TS =Timeseries()
     TS.from_csv("Data/Ellis_feq_30_sec.csv")
-    TS.plot("title","1h")
+    TS.plot("title", "1h")
 
 
 

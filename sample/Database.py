@@ -1,6 +1,10 @@
+import sqlite3
+import time
+import datetime
+import random
 
 
-
+# TODO Implement SQL and Influx or MangoDB
 class Database(object):
     pass
 
@@ -29,4 +33,31 @@ class MangoDB(Database):
 
     def insert(collection, data):
         return Database.database[collection].insert(data)
+
+
+class SQL(Database):
+    c = None
+    conn = None
+    def __init__(self):
+        pass
+
+    def connect(self):
+        self.conn = sqlite3.connect('Data/tutorial.db')
+        self.c = self.conn.cursor()
+
+    def create_table(self):
+        self.c.execute('CREATE TABLE IF NOT EXISTS stuffToPlot(unix REAL, datestamp TEXT, keyword TEXT, value REAL)')
+
+    def data_entry(self):
+        self.c.execute("INSERT INTO stuffToPlot VALUES(45654564,'2016-01-01','Python','5')")
+        self.conn.commit()
+        self.c.close()
+        self.conn.close()
+
+
+if __name__ == "__main__":
+    MySQL = SQL()
+    MySQL.connect()
+    MySQL.create_table()
+    MySQL.data_entry()
 

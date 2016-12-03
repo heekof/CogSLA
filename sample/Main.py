@@ -19,8 +19,6 @@ logger.debug("Start of the Main Program")
 if __name__ == '__main__':
     pass
 
-# TODO This is a to do comment
-
 
 '''
 Working with Time Series

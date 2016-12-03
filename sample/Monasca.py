@@ -17,11 +17,7 @@ class Monasca:
     measurements = []
 
     def __init__(self):
-        ##
-        ## The bug is HERE
-        ## TODO You SHould read Measurement as a list not as a String
-        ##
-         #  self.measurements = read_list("Data/Measurements.txt")
+       #  self.measurements = read_list("Data/Measurements.txt")
         pass
 
     #@staticmethod
