@@ -4,6 +4,9 @@ import logging
 # Import libraries use for visualization and analysis
 import pandas as pd
 import numpy as np
+import datetime
+import yaml
+
 #import cufflinks as cf
 
 ALL = ['net.out_packets_sec', 'cpu.idle_perc', 'cpu.stolen_perc', 'cpu.system_perc', 'cpu.wait_perc',
@@ -12,6 +15,34 @@ ALL = ['net.out_packets_sec', 'cpu.idle_perc', 'cpu.stolen_perc', 'cpu.system_pe
        'load.avg_15_min', 'load.avg_1_min', 'load.avg_5_min', 'mem.free_mb', 'mem.total_mb', 'mem.usable_perc',
        'mem.usable_mb', 'net.in_bytes_sec', 'net.in_errors_sec', 'net.in_packets_dropped_sec', 'net.in_packets_sec',
        'net.out_bytes_sec', 'net.out_errors_sec', 'process.cpu_perc', 'process.mem.rss_mbytes']
+
+def Timestamp(df):
+    tsp = np.array(df.index)
+    string_date = np.array(df.index)
+    i = 0;
+    for ind in tsp:
+        tsp[i] = time.mktime(datetime.datetime.strptime(repr(str(ind))[1:-1], '%Y-%m-%dT%H:%M:%S.%fZ').timetuple())
+        # string_date[i]=datetime.datetime.fromtimestamp(int(tsp[i])).strftime('%Y-%m-%d %H:%M:%S')
+        string_date[i] = datetime.datetime.utcfromtimestamp(tsp[i])
+        i += 1;
+
+    return string_date
+
+
+def yaml_load(file_path):
+    ''' Read Data from a YAML file '''
+    with open(file_path, 'r') as file_descriptor:
+        data = yaml.load(file_descriptor)
+    return data
+
+
+def yaml_dump(file_path):
+    ''' Dump Data to a YAML file '''
+    with open(file_path, 'w') as file_descriptor:
+        yaml.dump(data, file_descriptor)
+
+
+
 
 
 def read_file(path):
@@ -59,17 +90,6 @@ def initLog(path,debug=0):
 
 
 
-
-
-
-
-def Timestamp(df):
-    tsp = np.array(df.index)
-    i=0;
-    for ind in tsp:
-        tsp[i] = time.mktime(datetime.datetime.strptime(repr(str(ind))[1:-1], '%Y-%m-%dT%H:%M:%S.%fZ').timetuple())
-        i += 1;
-    return tsp
 
 
 def stamped_df(dframe):

@@ -4,20 +4,22 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 
+
 class Visualization(object):
-    Data = None
+    data = None
+    plt = plt
 
 
-    def __init__(self,Data):
-        self.Data = Data
-
+    def __init__(self, data, plt):
+        self.data = data
+        self.plt = plt
     def read(self):
         pass
 
-    def save(self,plt,name,path="Figures/"):
+    def save(self, name, path="Figures/"):
         # see how to write it ...
-        plt.savefig(path+name)
-
+        self.data.dataframe.plot()
+        self.plt.savefig(path+name)
 
     def show(self):
         pass
@@ -25,16 +27,17 @@ class Visualization(object):
 
 class GraphViz(Visualization):
 
-    def showgraph(self,plt):
+    def show_graph(self):
         # show graph
-        self.Data.Dataframe.plot()
-        self.plt = plt
-        plt.show()
+        self.data.dataframe.plot()
+        self.plt.show()
 
+    def animated_graph(self):
+        pass
 
     def showgraph_by_name(self,plt,name,start=0,end=100):
         # show graph
-        self.Data.Dataframe[name][start:end].plot()
+        self.data.dataframe[name][start:end].plot()
         self.plt = plt
         plt.show()
 

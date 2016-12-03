@@ -15,7 +15,7 @@ class Monasca:
     def __init__(self):
         ##
         ## The bug is HERE
-        ## You SHould read Measurement as a list not as a String
+        ## TODO You SHould read Measurement as a list not as a String
         ##
         self.measurements = read_file("Data/Measurements.txt")
 
