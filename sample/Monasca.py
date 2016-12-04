@@ -10,11 +10,11 @@ import json
 import pickle
 
 class Monasca:
+
     database = None
     ks = None
     monasca_client = []
     metrics = []
-    metrics2 = []
     measurements = []
 
 
@@ -40,9 +40,6 @@ class Monasca:
         return self.monasca_client
 
     def request(self, start_time, end_time, metrics=['net.out_packets_sec']):
-        metrics2 = []
-
-
         self.metrics = metrics
 
         # The error was HEre self.metrics instead of metrics
@@ -160,7 +157,6 @@ if __name__ == '__main__':
 
         Measurements to Dataframe
     '''
-
     MC = Monasca()
     MC.authenticate()
     # df_Ellis = MC.df_from_measurements('ellis.jaafar.com');
@@ -168,13 +164,8 @@ if __name__ == '__main__':
     MC.request(start_time="2016-11-16T15:50:26.0Z", end_time="2016-11-17T16:55:55.0Z",metrics=ALL[1:5])
     MC.store_measurements("sample/Data/measurements.json")
     #print MC.measurements
-
-
     #print type(MC.measurements[4][0])
-
     #print MC.df_from_measurements('homer.jaafar.com')
-
-
    # print type(MC.measurements)
     #MC.df_debug()
     # df_Ellis.head()
@@ -184,12 +175,8 @@ if __name__ == '__main__':
 
         Connecting to Monasca
     '''
-
-
-
     #resp = MC.monasca_client.metrics.list()
     #print type(resp)
     #write_list("Data/response_monasca.txt",resp)
-
     #check error here
 

@@ -1,17 +1,16 @@
 import pandas as pd
 import numpy as np
-from Util import yaml_load, read_list
+from Util import yaml_load, my_timer,my_logger
 import json
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from matplotlib import style
+#style.use('fivethirtyeight')
+
 # Abstract data class
 class Data(object):
     data = []
     dataframe = []
-    train_size = None
-    test_size = None
-    train = None
-    test = None
-
 
     def __init__(self):
         pass
@@ -20,7 +19,6 @@ class Data(object):
 
     def save(self):
         pass
-
 
     def show_data(self):
         print self.data
@@ -55,8 +53,11 @@ class Timeseries(Data):
 
     dataX, dataY = [], []
 
-    def __init__(self):
-        pass
+    def __init__(self, dataframe):
+        self.dataframe = dataframe
+        data = self.dataframe.values
+        data = data.astype('float32')
+        self.data = data
 
     '''
     convert an array of values into a dataset matrix
@@ -87,24 +88,35 @@ class Timeseries(Data):
     def moving_average(self):
         pass
 
-    def from_csv(self, path):
+    # A class Method is used as a Second Constructor
+    @classmethod
+    def from_csv(cls, path):
         # Setting Up data and dataframe
         # Setting up index as time object
-        self.dataframe = pd.read_csv(path, engine='python', index_col=[0], sep=";")
-        self.dataframe.reset_index(drop=True)
-        New_index = pd.to_datetime(self.dataframe.index)
-        self.dataframe.index = New_index
-        self.data = self.dataframe.values
-        self.data = self.data.astype('float32')
+        dataframe = pd.read_csv(path, engine='python', index_col=[0], sep=";")
+        dataframe.reset_index(drop=True)
+        New_index = pd.to_datetime(dataframe.index)
+        dataframe.index = New_index
+        return cls(dataframe)
+
+
+    # A static method is a method that doesn't access the instance or the class in the function
+    @staticmethod
+    def my_static_method():
+        return True
+
 
     def to_csv(self,name,path="sample/Data/"):
         self.dataframe.to_csv(path+name, sep=";")
+        
 
     def plot(self,title="No title", freq=None):
         if freq:
             self.dataframe.resample(freq).mean().plot()
         else:
             self.dataframe.plot()
+        # Code Operational to plot with dates
+        #plt.plot_date(self.dataframe.index, self.dataframe['cpu.idle_perc'], '--')
         plt.title(title)
         plt.show()
 
@@ -195,6 +207,8 @@ class RawData(Data):
                 i = i + 1;
         return df;
 
+    @my_timer
+    @my_logger
     def to_csv(self,host,path,metric={}):
         if metric:
             self.df_from_raw(host[metric]).to_csv("sample/Data/"+path, sep=";")
@@ -203,11 +217,12 @@ class RawData(Data):
 
 if __name__ == '__main__':
 
-    RD = RawData("sample/Data/measurements.json")
-    RD.to_csv('ellis.jaafar.com',"test.csv")
-
-    TS =Timeseries()
-    TS.from_csv("sample/Data/test.csv")
+    # RD = RawData("sample/Data/measurements.json")
+    # RD.to_csv('ellis.jaafar.com',"test.csv")
+    #TS =Timeseries()
+    #New constructor
+    TS = Timeseries.from_csv("sample/Data/test.csv")
+    print(help(TS))
     TS.plot("title")
 
 

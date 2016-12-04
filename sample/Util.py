@@ -6,10 +6,48 @@ import pandas as pd
 import numpy as np
 import datetime
 import yaml
-
+from functools import wraps
 #import cufflinks as cf
 
-ALL = ['net.out_packets_sec', 'cpu.idle_perc', 'cpu.stolen_perc', 'cpu.system_perc', 'cpu.wait_perc', 'disk.inode_used_perc', 'disk.space_used_perc', 'host_alive_status', 'http_status', 'io.read_kbytes_sec', 'io.read_req_sec', 'io.read_time_sec', 'io.write_kbytes_sec', 'io.write_req_sec', 'io.write_time_sec', 'load.avg_15_min', 'load.avg_1_min', 'load.avg_5_min', 'mem.free_mb', 'mem.total_mb', 'mem.usable_perc',        'mem.usable_mb', 'net.in_bytes_sec', 'net.in_errors_sec', 'net.in_packets_dropped_sec', 'net.in_packets_sec', 'net.out_bytes_sec', 'net.out_errors_sec', 'process.cpu_perc', 'process.mem.rss_mbytes']
+ALL = ['net.out_packets_sec', 'cpu.idle_perc', 'cpu.stolen_perc', 'cpu.system_perc', 'cpu.wait_perc', 'disk.inode_used_perc',
+       'disk.space_used_perc', 'host_alive_status', 'http_status', 'io.read_kbytes_sec', 'io.read_req_sec', 'io.read_time_sec',
+       'io.write_kbytes_sec', 'io.write_req_sec', 'io.write_time_sec', 'load.avg_15_min', 'load.avg_1_min', 'load.avg_5_min',
+       'mem.free_mb', 'mem.total_mb', 'mem.usable_perc', 'mem.usable_mb', 'net.in_bytes_sec', 'net.in_errors_sec', 'net.in_packets_dropped_sec',
+       'net.in_packets_sec', 'net.out_bytes_sec', 'net.out_errors_sec', 'process.cpu_perc', 'process.mem.rss_mbytes']
+
+def my_logger(orig_func):
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+    # logging.basicConfig(filename='sample/Log/{}.log'.format(orig_func.__name__), level=logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler = logging.FileHandler('sample/Log/{}.log'.format(orig_func.__name__))
+
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    # add the handlers to the logger
+
+
+    def wrapper(*args,**kwargs):
+
+        logger.debug("here log function {} ".format(orig_func.__name__))
+
+        return orig_func(*args,**kwargs)
+
+    return wrapper
+
+def my_timer(orig_func):
+    import time
+
+
+    def wrapper(*args, **kwargs):
+        t1 = time.time()
+        result = orig_func(*args,**kwargs)
+        t2 = time.time() - t1
+        print(" {} ran in  {}".format(wrapper.__name__,t2))
+        return result
+
+    return wrapper
+
 def Timestamp(df):
     tsp = np.array(df.index)
     string_date = np.array(df.index)

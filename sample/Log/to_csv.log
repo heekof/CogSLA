@@ -1,0 +1,14 @@
+INFO:root:Ran 
+INFO:root:Ran 
+INFO:root:Ran 
+2016-12-03 19:40:10,453 - Util - DEBUG - Start of the Main Program
+DEBUG:Util:Start of the Main Program
+2016-12-03 19:41:30,006 - Util - DEBUG - here log function wrapper 
+DEBUG:Util:here log function wrapper 
+2016-12-03 19:42:13,135 - Util - DEBUG - here log function to_csv 
+DEBUG:Util:here log function to_csv 
+2016-12-03 19:45:59,786 - Util - DEBUG - here log function to_csv 
+DEBUG:Util:here log function to_csv 
+2016-12-03 19:48:08,635 - Util - DEBUG - here log function to_csv 
+DEBUG:Util:here log function to_csv 
+2016-12-03 19:49:15,854 - Util - DEBUG - here log function to_csv 
