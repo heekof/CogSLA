@@ -15,15 +15,18 @@ ALL = ['net.out_packets_sec', 'cpu.idle_perc', 'cpu.stolen_perc', 'cpu.system_pe
        'mem.free_mb', 'mem.total_mb', 'mem.usable_perc', 'mem.usable_mb', 'net.in_bytes_sec', 'net.in_errors_sec', 'net.in_packets_dropped_sec',
        'net.in_packets_sec', 'net.out_bytes_sec', 'net.out_errors_sec', 'process.cpu_perc', 'process.mem.rss_mbytes']
 
+Working_dir = 'sample/'
+Data_dir = Working_dir+'Data/'
+
 def my_logger(orig_func):
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
     # logging.basicConfig(filename='sample/Log/{}.log'.format(orig_func.__name__), level=logging.INFO)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler = logging.FileHandler('sample/Log/{}.log'.format(orig_func.__name__))
+    #handler = logging.FileHandler('sample/Log/{}.log'.format(orig_func.__name__))
 
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    #handler.setFormatter(formatter)
+    #logger.addHandler(handler)
     # add the handlers to the logger
 
 
@@ -36,6 +39,10 @@ def my_logger(orig_func):
     return wrapper
 
 def my_timer(orig_func):
+    """
+
+    :rtype: object
+    """
     import time
 
 
@@ -63,33 +70,37 @@ def Timestamp(df):
 
 def yaml_load(file_path):
     ''' Read Data from a YAML file '''
-    with open(file_path, 'r') as file_descriptor:
+    with open(Data_dir+file_path, 'r') as file_descriptor:
         data = yaml.load(file_descriptor)
     return data
 
 
 def yaml_dump(file_path, data):
     ''' Dump Data to a YAML file '''
-    with open(file_path, 'w') as file_descriptor:
+    with open(Data_dir+file_path, 'w') as file_descriptor:
         yaml.dump(data, file_descriptor)
 
 def read_list(path):
-    with open(path) as f:
+    with open(Data_dir+path) as f:
         lines = f.read().splitlines()
     return lines
 
 def read_file(path):
-    file = open(path, 'r')
+    file = open(Data_dir+path, 'r')
     content = file.read()
     return content
-
+@my_timer
+@my_logger
 def write_file(path,content):
-    file = open(path, "w")
-    file.write(content)
-    file.close()
+    with open(Data_dir+path,'r') as rf:
+        with open(Data_dir+'test_copy.txt','w') as wf:
+            for line in rf:
+                wf.write(line)
 
+@my_timer
+@my_logger
 def write_list(path,thelist):
-    file = open(path, "w")
+    file = open(Data_dir+path, "w")
     for item in thelist:
         file.write("%s\n" % item)
     file.close()
@@ -102,7 +113,7 @@ def printVar(a,b=3,*args,**kwargs):
 
     return True
 def deleteContent(path):
-    open(path,'w').close()
+    open(Data_dir+path,'w').close()
 
 def initLog(path,debug=0):
     logger = logging.getLogger(__name__)

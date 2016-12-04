@@ -4,7 +4,7 @@ from monascaclient import client
 from monascaclient import ksclient
 import pandas as pd
 import numpy as np
-from Util import ALL
+from Util import ALL, Data_dir
 from Password import *
 import json
 import pickle
@@ -39,11 +39,11 @@ class Monasca:
     def get_monasca_client(self):
         return self.monasca_client
 
-    def request(self, start_time, end_time, metrics=['net.out_packets_sec']):
+    def request(self, start_time, end_time, metrics=['net.out_packets_sec'],dimensions={}):
         self.metrics = metrics
 
         # The error was HEre self.metrics instead of metrics
-        self.measurements = self.get_measurements(self.get_metrics(metrics,limit=25), start_time, end_time)
+        self.measurements = self.get_measurements(self.get_metrics(metrics,dimensions,limit={}), start_time, end_time)
 
     def show_measurements(self):
         print self.measurements
@@ -146,7 +146,7 @@ class Monasca:
     #     return df;
 
     def store_measurements(self,path):
-        with open(path, 'wb') as outfile:
+        with open(Data_dir+path, 'wb') as outfile:
             json.dump(self.measurements, outfile)
 
 
@@ -161,8 +161,8 @@ if __name__ == '__main__':
     MC.authenticate()
     # df_Ellis = MC.df_from_measurements('ellis.jaafar.com');
     #print ALL
-    MC.request(start_time="2016-11-16T15:50:26.0Z", end_time="2016-11-17T16:55:55.0Z",metrics=ALL[1:5])
-    MC.store_measurements("sample/Data/measurements.json")
+    MC.request(start_time="2016-11-4T15:55:55.001Z", end_time="2016-12-4T16:55:55.001Z",metrics=ALL,dimensions={'service': 'NFV-SDN-testbed'})
+    MC.store_measurements("measurements.json")
     #print MC.measurements
     #print type(MC.measurements[4][0])
     #print MC.df_from_measurements('homer.jaafar.com')

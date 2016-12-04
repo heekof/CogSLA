@@ -5,12 +5,15 @@ import random
 from Data import Timeseries
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from Util import Data_dir,my_timer
 from matplotlib import style
 style.use('fivethirtyeight')
 
 # TODO Implement also Influx or MangoDB
 class Database(object):
-    pass
+    name = ''
+    def __init__(self):
+        pass
 
 
 class MangoDB(Database):
@@ -46,28 +49,55 @@ class SQL(Database):
         pass
 
     def connect(self):
-        self.conn = sqlite3.connect('sample/Data/timeseries.db')
+        self.conn = sqlite3.connect(Data_dir+'timeseries.db')
         self.c = self.conn.cursor()
 
 
     # TODO automate the creation of the database
-    def create_table(self):
-        self.c.execute('CREATE TABLE IF NOT EXISTS Ellis(unix REAL, datestamp TEXT, value REAL)')
+    def create_table(self, dataframe, name = "timeseries"):
+        columns = dataframe.columns
+        self.name = name
+        champs = ''
+        for c in columns:
+            champs += ' '+c+' REAL'
+            if not c == columns[-1]:
+                champs += ', '
 
+        champs = champs.translate(None, '.')
+        #print champs
+        self.c.execute('CREATE TABLE IF NOT EXISTS '+name+'(unix REAL, datestamp DATE, '+champs+' )')
+
+    #@my_timer
     def write(self, dataframe):
 
-        #date = str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S'))
+        columns = dataframe.columns
+        champs = ''
+        point = ''
+        for c in columns:
+            point += "?"
+            champs += " " + c
+            if not c == columns[-1]:
+                champs += ', '
+                point += ","
+
+        champs = champs.translate(None, '.')
+
         for i in range(len(dataframe)):
-            #date = datetime.datetime.strftime(dataframe.index[i],'%Y-%m-%d %H:%M:%S.%f')
-            #print i
-            #print dataframe.index[i]
-            if i != 241:
-                unix = time.mktime(datetime.datetime.strptime(str(dataframe.index[i]), "%Y-%m-%d %H:%M:%S.%f").timetuple())
-                date = str(dataframe.index[i])
-                value = dataframe['cpu.idle_perc'][i]
-                #print "date {} and value {} ".format(date,value)
-                self.c.execute("INSERT INTO Ellis (unix, datestamp, value) VALUES (?,?,?)",
-                           (unix, date, value))
+
+                #print i
+            unix = time.mktime(datetime.datetime.strptime(str(dataframe.index[i]), "%Y-%m-%d %H:%M:%S.%f").timetuple())
+            date = str(dataframe.index[i])
+            values = []
+
+            row_values = []
+            for field in dataframe.columns:
+                row_values.append(dataframe[field][i])
+            values.append(row_values)
+                #print values[0]
+
+            #print("INSERT INTO "+self.name+" (unix, datestamp, "+champs+") VALUES (?,?,"+point+")",(unix,date,dataframe['net.out_packets_sec'][i],dataframe['cpu.idle_perc'][i],dataframe['cpu.stolen_perc'][i],dataframe['cpu.system_perc'][i],dataframe['cpu.wait_perc'][i],dataframe['disk.inode_used_perc'][i],dataframe['disk.space_used_perc'][i],dataframe['io.read_kbytes_sec'][i],dataframe['io.read_req_sec'][i],dataframe['io.read_time_sec'][i],dataframe['io.write_kbytes_sec'][i],dataframe['io.write_req_sec'][i],dataframe['io.write_time_sec'][i],dataframe['load.avg_15_min'][i],dataframe['load.avg_1_min'][i],dataframe['load.avg_5_min'][i],dataframe['mem.free_mb'][i],dataframe['mem.total_mb'][i],dataframe['mem.usable_perc'][i],dataframe['mem.usable_mb'][i],dataframe['net.in_bytes_sec'][i],dataframe['net.in_errors_sec'][i],dataframe['net.in_packets_dropped_sec'][i],dataframe['net.in_packets_sec'][i],dataframe['net.out_bytes_sec'][i],dataframe['net.out_errors_sec'][i]))
+            self.c.execute("INSERT INTO "+self.name+" (unix, datestamp, "+champs+") VALUES (?,?,"+point+")",(unix,date,dataframe['net.out_packets_sec'][i],dataframe['cpu.idle_perc'][i],dataframe['cpu.stolen_perc'][i],dataframe['cpu.system_perc'][i],dataframe['cpu.wait_perc'][i],dataframe['disk.inode_used_perc'][i],dataframe['disk.space_used_perc'][i],dataframe['io.read_kbytes_sec'][i],dataframe['io.read_req_sec'][i],dataframe['io.read_time_sec'][i],dataframe['io.write_kbytes_sec'][i],dataframe['io.write_req_sec'][i],dataframe['io.write_time_sec'][i],dataframe['load.avg_15_min'][i],dataframe['load.avg_1_min'][i],dataframe['load.avg_5_min'][i],dataframe['mem.free_mb'][i],dataframe['mem.total_mb'][i],dataframe['mem.usable_perc'][i],dataframe['mem.usable_mb'][i],dataframe['net.in_bytes_sec'][i],dataframe['net.in_errors_sec'][i],dataframe['net.in_packets_dropped_sec'][i],dataframe['net.in_packets_sec'][i],dataframe['net.out_bytes_sec'][i],dataframe['net.out_errors_sec'][i]))
+
 
         self.conn.commit()
 
@@ -80,14 +110,16 @@ class SQL(Database):
             data.append(row)
         return data
 
-    def plot(self):
-        self.c.execute("SELECT unix,value FROM Ellis")
+    def plot(self,VNF,metric):
+
+        metric = metric.translate(None, '.')
+        self.c.execute("SELECT unix, "+metric+" FROM "+VNF+"")
         dates = []
         values = []
         pas = []
         i=0
         for row in self.c.fetchall():
-            print row
+            #print row
             #print i
             dates.append(datetime.datetime.fromtimestamp(row[0]))
             values.append(row[1])
@@ -106,14 +138,43 @@ if __name__ == "__main__":
     '''
     MySQL = SQL()
     MySQL.connect()
-    MySQL.create_table()
 
-    TS = Timeseries()
-    TS.from_csv("sample/Data/test.csv")
 
-    MySQL.write(TS.dataframe)
-    #MySQL.c.close()
-     #MySQL.conn.close()
+    @my_timer
+    def send_to_database():
+
+
+
+        # Second constructor
+        TS_Ellis = Timeseries.from_csv("Ellis.csv")
+        TS_Bono = Timeseries.from_csv("Bono.csv")
+        TS_Sprout = Timeseries.from_csv("Sprout.csv")
+        TS_Homer = Timeseries.from_csv("Homer.csv")
+        TS_Homestead = Timeseries.from_csv("Homestead.csv")
+        TS_Ralf = Timeseries.from_csv("Ralf.csv")
+
+
+        MySQL.create_table(TS_Ellis.dataframe,"Ellis")
+        MySQL.write(TS_Ellis.dataframe)
+
+        MySQL.create_table(TS_Homer.dataframe, "Homer")
+        MySQL.write(TS_Homer.dataframe)
+
+
+        MySQL.create_table(TS_Homestead.dataframe, "Homestead")
+        MySQL.write(TS_Homestead.dataframe)
+
+
+        MySQL.create_table(TS_Ralf.dataframe, "Ralf")
+        MySQL.write(TS_Ralf.dataframe)
+
+        MySQL.create_table(TS_Sprout.dataframe, "Sprout")
+        MySQL.write(TS_Sprout.dataframe)
+
+
+        MySQL.create_table(TS_Bono.dataframe, "Bono")
+        MySQL.write(TS_Bono.dataframe)
+
 
     '''
     Read from SQL
@@ -121,7 +182,12 @@ if __name__ == "__main__":
     '''
 
     #print 'The length of the data is '.format(len(MySQL.read_from_db()))
-    MySQL.plot()
+
+    def plot():
+        MySQL.plot("Bono","cpu.idle_perc")
+
+    #@my_timer
+    send_to_database()
 
     MySQL.c.close()
     MySQL.conn.close()

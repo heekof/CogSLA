@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from Util import yaml_load, my_timer,my_logger
+from Util import yaml_load, my_timer,my_logger, Data_dir,write_list
+import Util as U
 import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -106,7 +107,7 @@ class Timeseries(Data):
         return True
 
 
-    def to_csv(self,name,path="sample/Data/"):
+    def to_csv(self,name,path=Data_dir):
         self.dataframe.to_csv(path+name, sep=";")
         
 
@@ -211,19 +212,37 @@ class RawData(Data):
     @my_logger
     def to_csv(self,host,path,metric={}):
         if metric:
-            self.df_from_raw(host[metric]).to_csv("sample/Data/"+path, sep=";")
+            self.df_from_raw(host[metric]).to_csv(Data_dir+path, sep=";",index_label="Timestamp")
         else:
-            self.df_from_raw(host).to_csv("sample/Data/"+path, sep=";")
+            self.df_from_raw(host).to_csv(Data_dir+path, sep=";",index_label="Timestamp")
 
 if __name__ == '__main__':
 
-    # RD = RawData("sample/Data/measurements.json")
-    # RD.to_csv('ellis.jaafar.com',"test.csv")
+
+    RD = RawData(Data_dir + "measurements.json")
+
+    def measurements_to_csv():
+
+        RD.to_csv('ellis.jaafar.com',"Ellis.csv")
+        RD.to_csv('bono.jaafar.com', "Bono.csv")
+        RD.to_csv('sprout.jaafar.com', "Sprout.csv")
+        RD.to_csv('homer.jaafar.com', "Homer.csv")
+        RD.to_csv('homestead.jaafar.com', "Homestead.csv")
+        RD.to_csv('ralf.jaafar.com', "Ralf.csv")
+
+
+
+
+    #U.write_list("Info.txt",RD.data[26])
+
+    print type(RD.data[26][0]['measurements'])
+    print len(RD.data[26][0]['measurements'])
+
     #TS =Timeseries()
     #New constructor
-    TS = Timeseries.from_csv("sample/Data/test.csv")
-    print(help(TS))
-    TS.plot("title")
+    # TS = Timeseries.from_csv(Data_dir+"test.csv")
+    # print(help(TS))
+    # TS.plot("title")
 
 
 
