@@ -1,0 +1,14 @@
+
+DELETE FROM `Ralf` WHERE 1;
+
+DELETE FROM `Bono` WHERE 1;
+
+
+DELETE FROM `Sprout` WHERE 1;
+
+DELETE FROM `Homer` WHERE 1;
+
+
+DELETE FROM `Homestead` WHERE 1;
+
+DELETE FROM `Ellis` WHERE 1;

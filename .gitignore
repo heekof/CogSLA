@@ -1,8 +1,14 @@
 .idea/
 
-.idea/
-
-Data/Monasca.data
+*.data
 
 Password.py
+
 *.pyc
+*.json
+.Rdata
+sample/.Rhistory
+sample/.RData
+sample/Data/*.json
+sample/Data/*.txt
+sample/Data/*.csv 
