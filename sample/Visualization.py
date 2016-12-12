@@ -1,7 +1,4 @@
 
-from Data import Data
-import pandas as pd
-import matplotlib
 import matplotlib.pyplot as plt
 
 
@@ -13,6 +10,17 @@ class Visualization(object):
     def __init__(self, data, plt):
         self.data = data
         self.plt = plt
+
+        # Magic function call them by repr(MC)
+        # Print all the necessary Info to recreate the object
+    def __repr__(self):
+         pass
+
+    # Magic function call them by str(MC)
+    # Print Info related to the object
+    def __str__(self):
+         pass
+
     def read(self):
         pass
 

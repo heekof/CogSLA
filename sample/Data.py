@@ -1,12 +1,14 @@
 import pandas as pd
 import numpy as np
-from Util import yaml_load, my_timer,my_logger, Data_dir,write_list
+#from Util import yaml_load, my_timer,my_logger, Data_dir,write_list
 import Util as U
 import json
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib import style
 #style.use('fivethirtyeight')
+
+
 
 # Abstract data class
 class Data(object):
@@ -15,6 +17,17 @@ class Data(object):
 
     def __init__(self):
         pass
+
+    # Magic function call them by repr(MC)
+    # Print all the necessary Info to recreate the object
+    def __repr__(self):
+        pass
+
+    # Magic function call them by str(MC)
+    # Print Info related to the object
+    def __str__(self):
+        pass
+
     def load(self):
         pass
 
@@ -59,6 +72,16 @@ class Timeseries(Data):
         data = self.dataframe.values
         data = data.astype('float32')
         self.data = data
+
+    # Magic function call them by repr(MC)
+    # Print all the necessary Info to recreate the object
+    def __repr__(self):
+        pass
+
+    # Magic function call them by str(MC)
+    # Print Info related to the object
+    def __str__(self):
+        pass
 
     '''
     convert an array of values into a dataset matrix
@@ -107,7 +130,7 @@ class Timeseries(Data):
         return True
 
 
-    def to_csv(self,name,path=Data_dir):
+    def to_csv(self,name,path=U.Data_dir):
         self.dataframe.to_csv(path+name, sep=";")
         
 
@@ -122,13 +145,14 @@ class Timeseries(Data):
         plt.show()
 
 # TODO Create at least 3 SLOs for IMS Service
+# TODO SLO Created by the manager ? !
 class SLO(Data):
 
     data = None
 
     def __init__(self,path):
         #Yaml Reader
-        self.data = yaml_load(path)
+        self.data = U.yaml_load(path)
 
     def show(self):
         for item in self.data:
@@ -137,6 +161,16 @@ class SLO(Data):
 
     def get_values(self):
         return self.data
+    # Magic function call them by repr(MC)
+    # Print all the necessary Info to recreate the object
+    def __repr__(self):
+        pass
+
+    # Magic function call them by str(MC)
+    # Print Info related to the object
+    def __str__(self):
+        pass
+
 
 
 class RawData(Data):
@@ -208,18 +242,18 @@ class RawData(Data):
                 i = i + 1;
         return df;
 
-    @my_timer
-    @my_logger
+    @U.my_timer
+    @U.my_logger
     def to_csv(self,host,path,metric={}):
         if metric:
-            self.df_from_raw(host[metric]).to_csv(Data_dir+path, sep=";",index_label="Timestamp")
+            self.df_from_raw(host[metric]).to_csv(U.Data_dir+path, sep=";",index_label="Timestamp")
         else:
-            self.df_from_raw(host).to_csv(Data_dir+path, sep=";",index_label="Timestamp")
+            self.df_from_raw(host).to_csv(U.Data_dir+path, sep=";",index_label="Timestamp")
 
 if __name__ == '__main__':
 
 
-    RD = RawData(Data_dir + "measurements.json")
+    RD = RawData(U.Data_dir + "measurements.json")
 
     def measurements_to_csv():
 

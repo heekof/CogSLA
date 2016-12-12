@@ -4,7 +4,8 @@ from monascaclient import client
 from monascaclient import ksclient
 import pandas as pd
 import numpy as np
-from Util import ALL, Data_dir
+#from Util import ALL, Data_dir
+import Util as U
 from Password import *
 import json
 import pickle
@@ -20,6 +21,16 @@ class Monasca:
 
     def __init__(self):
        #  self.measurements = read_list("Data/Measurements.txt")
+        pass
+    # TODO: Implement Magic functions
+    # Magic function call them by repr(MC)
+    # Print all the necessary Info to recreate the object
+    def __repr__(self):
+        pass
+
+    # Magic function call them by str(MC)
+    # Print Info related to the object
+    def __str__(self):
         pass
 
     #@staticmethod
@@ -79,6 +90,10 @@ class Monasca:
                 end_time=end_time))
 
         return measurements
+
+    # TODO  Write live code to generate live stream from Monasca for Online Learning
+    def live_monasca(self):
+        pass
 
 
 
@@ -146,7 +161,7 @@ class Monasca:
     #     return df;
 
     def store_measurements(self,path):
-        with open(Data_dir+path, 'wb') as outfile:
+        with open(U.Data_dir+path, 'wb') as outfile:
             json.dump(self.measurements, outfile)
 
 
@@ -156,12 +171,13 @@ if __name__ == '__main__':
         Working with Monasca
 
         Measurements to Dataframe
+
     '''
     MC = Monasca()
     MC.authenticate()
     # df_Ellis = MC.df_from_measurements('ellis.jaafar.com');
     #print ALL
-    MC.request(start_time="2016-11-4T15:55:55.001Z", end_time="2016-12-4T16:55:55.001Z",metrics=ALL,dimensions={'service': 'NFV-SDN-testbed'})
+    MC.request(start_time="2016-11-4T15:55:55.001Z", end_time="2016-12-4T16:55:55.001Z",metrics=U.ALL,dimensions={'service': 'NFV-SDN-testbed'})
     MC.store_measurements("measurements.json")
     #print MC.measurements
     #print type(MC.measurements[4][0])

@@ -5,7 +5,8 @@ import random
 from Data import Timeseries
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from Util import Data_dir,my_timer
+#from Util import Data_dir,my_timer
+import Util as U
 from matplotlib import style
 style.use('fivethirtyeight')
 
@@ -48,8 +49,18 @@ class SQL(Database):
     def __init__(self):
         pass
 
+    # Magic function call them by repr(MC)
+    # Print all the necessary Info to recreate the object
+    def __repr__(self):
+         pass
+
+    # Magic function call them by str(MC)
+    # Print Info related to the object
+    def __str__(self):
+        pass
+
     def connect(self):
-        self.conn = sqlite3.connect(Data_dir+'timeseries.db')
+        self.conn = sqlite3.connect(U.Data_dir+'timeseries.db')
         self.c = self.conn.cursor()
 
 
@@ -140,7 +151,7 @@ if __name__ == "__main__":
     MySQL.connect()
 
 
-    @my_timer
+    @U.my_timer
     def send_to_database():
 
 

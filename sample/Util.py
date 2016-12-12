@@ -112,6 +112,8 @@ def printVar(a,b=3,*args,**kwargs):
         print 'key = {} , value = {} '.format(key,value)
 
     return True
+
+# Delete file content
 def deleteContent(path):
     open(Data_dir+path,'w').close()
 
@@ -130,11 +132,6 @@ def initLog(path,debug=0):
     if not debug:
         logging.disable(logging.DEBUG)
     return logger
-
-
-
-
-
 
 def stamped_df(dframe):
 

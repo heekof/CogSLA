@@ -1,5 +1,6 @@
 from Data import SLO
 
+# TODO Dynamic SLA
 
 class SLA:
 
@@ -11,6 +12,17 @@ class SLA:
         else:
             self.SLO = None
 
+            # Magic function call them by repr(MC)
+            # Print all the necessary Info to recreate the object
+
+    def __repr__(self):
+        pass
+
+        # Magic function call them by str(MC)
+        # Print Info related to the object
+
+    def __str__(self):
+        pass
 
 class Service:
 
@@ -23,3 +35,16 @@ class Service:
             self.Description = description
         else:
             self.Description = description
+
+
+            # Magic function call them by repr(MC)
+            # Print all the necessary Info to recreate the object
+
+    def __repr__(self):
+        pass
+
+        # Magic function call them by str(MC)
+        # Print Info related to the object
+
+    def __str__(self):
+        pass
